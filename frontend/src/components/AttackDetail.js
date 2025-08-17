@@ -653,6 +653,292 @@ const GenericVisualization = ({ step, isPlaying, animationKey }) => (
   </motion.div>
 );
 
+// Quiz Component
+const QuizComponent = ({ attack, sessionId }) => {
+  const [currentQuestion, setCurrentQuestion] = useState(0);
+  const [selectedAnswer, setSelectedAnswer] = useState(null);
+  const [answers, setAnswers] = useState([]);
+  const [showExplanation, setShowExplanation] = useState(false);
+  const [quizCompleted, setQuizCompleted] = useState(false);
+  const [score, setScore] = useState(0);
+  const [showHint, setShowHint] = useState(false);
+  
+  const questions = attack.quiz?.questions || [];
+  
+  if (!questions.length) {
+    return (
+      <div className="bg-gray-900/50 border border-gray-700 rounded-xl p-6">
+        <h3 className="text-xl font-semibold text-white mb-4">Knowledge Quiz</h3>
+        <div className="text-center py-12">
+          <Target className="w-16 h-16 text-yellow-400 mx-auto mb-4" />
+          <p className="text-gray-400">No quiz questions available for this attack</p>
+        </div>
+      </div>
+    );
+  }
+  
+  const currentQ = questions[currentQuestion];
+  
+  const handleAnswerSelect = (answerIndex) => {
+    setSelectedAnswer(answerIndex);
+    setShowExplanation(false);
+    setShowHint(false);
+  };
+  
+  const submitAnswer = () => {
+    const isCorrect = selectedAnswer === currentQ.correct_answer;
+    const newAnswers = [...answers, {
+      question: currentQuestion,
+      selected: selectedAnswer,
+      correct: currentQ.correct_answer,
+      isCorrect
+    }];
+    setAnswers(newAnswers);
+    setShowExplanation(true);
+    
+    if (isCorrect) {
+      setScore(score + 1);
+    }
+  };
+  
+  const nextQuestion = () => {
+    if (currentQuestion < questions.length - 1) {
+      setCurrentQuestion(currentQuestion + 1);
+      setSelectedAnswer(null);
+      setShowExplanation(false);
+      setShowHint(false);
+    } else {
+      completeQuiz();
+    }
+  };
+  
+  const completeQuiz = async () => {
+    setQuizCompleted(true);
+    
+    // Submit quiz results to backend
+    if (sessionId) {
+      try {
+        await axios.post(`${API}/quiz`, {
+          session_id: sessionId,
+          attack_id: attack.id,
+          score: Math.round((score / questions.length) * 100),
+          answers: answers
+        });
+      } catch (error) {
+        console.error('Failed to submit quiz results:', error);
+      }
+    }
+  };
+  
+  const restartQuiz = () => {
+    setCurrentQuestion(0);
+    setSelectedAnswer(null);
+    setAnswers([]);
+    setShowExplanation(false);
+    setQuizCompleted(false);
+    setScore(0);
+    setShowHint(false);
+  };
+  
+  if (quizCompleted) {
+    const percentage = Math.round((score / questions.length) * 100);
+    
+    return (
+      <div className="bg-gray-900/50 border border-gray-700 rounded-xl p-6">
+        <div className="text-center">
+          <motion.div
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            className="mb-6"
+          >
+            <Trophy className={`w-16 h-16 mx-auto mb-4 ${
+              percentage >= 80 ? 'text-green-400' : 
+              percentage >= 60 ? 'text-yellow-400' : 'text-red-400'
+            }`} />
+            <h3 className="text-2xl font-bold text-white mb-2">Quiz Completed!</h3>
+            <div className={`text-3xl font-bold mb-4 ${
+              percentage >= 80 ? 'text-green-400' : 
+              percentage >= 60 ? 'text-yellow-400' : 'text-red-400'
+            }`}>
+              {percentage}%
+            </div>
+            <p className="text-gray-400">
+              You scored {score} out of {questions.length} questions correctly
+            </p>
+          </motion.div>
+          
+          {/* Score breakdown */}
+          <div className="bg-gray-800/50 rounded-lg p-4 mb-6 max-w-md mx-auto">
+            <h4 className="text-white font-semibold mb-3">Question Breakdown</h4>
+            {questions.map((q, index) => (
+              <div key={index} className="flex items-center justify-between py-2 border-b border-gray-700 last:border-b-0">
+                <span className="text-gray-300 text-sm">Q{index + 1}</span>
+                <span className={`text-sm ${
+                  answers[index]?.isCorrect ? 'text-green-400' : 'text-red-400'
+                }`}>
+                  {answers[index]?.isCorrect ? '✓ Correct' : '✗ Incorrect'}
+                </span>
+              </div>
+            ))}
+          </div>
+          
+          <button
+            onClick={restartQuiz}
+            className="px-6 py-3 bg-cyan-600 hover:bg-cyan-700 rounded-lg transition-colors"
+          >
+            Retake Quiz
+          </button>
+        </div>
+      </div>
+    );
+  }
+  
+  return (
+    <div className="bg-gray-900/50 border border-gray-700 rounded-xl p-6">
+      {/* Quiz header */}
+      <div className="flex items-center justify-between mb-6">
+        <h3 className="text-xl font-semibold text-white">Knowledge Quiz</h3>
+        <div className="text-cyan-400 text-sm">
+          Question {currentQuestion + 1} of {questions.length}
+        </div>
+      </div>
+      
+      {/* Progress bar */}
+      <div className="w-full bg-gray-700 rounded-full h-2 mb-6">
+        <motion.div
+          className="h-2 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full"
+          initial={{ width: 0 }}
+          animate={{ width: `${((currentQuestion + 1) / questions.length) * 100}%` }}
+          transition={{ duration: 0.5 }}
+        />
+      </div>
+      
+      {/* Question */}
+      <div className="mb-6">
+        <h4 className="text-lg font-semibold text-white mb-4">
+          {currentQ.question}
+        </h4>
+        
+        {/* Answer options */}
+        <div className="space-y-3">
+          {currentQ.options.map((option, index) => (
+            <motion.button
+              key={index}
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: index * 0.1 }}
+              onClick={() => handleAnswerSelect(index)}
+              disabled={showExplanation}
+              className={`w-full p-4 text-left rounded-lg border-2 transition-all ${
+                selectedAnswer === index
+                  ? showExplanation
+                    ? index === currentQ.correct_answer
+                      ? 'border-green-500 bg-green-500/20 text-green-400'
+                      : 'border-red-500 bg-red-500/20 text-red-400'
+                    : 'border-cyan-500 bg-cyan-500/20 text-cyan-400'
+                  : showExplanation && index === currentQ.correct_answer
+                    ? 'border-green-500 bg-green-500/20 text-green-400'
+                    : 'border-gray-600 bg-gray-800/50 text-gray-300 hover:border-gray-500'
+              }`}
+            >
+              <div className="flex items-center">
+                <span className="w-6 h-6 rounded-full border-2 border-current flex items-center justify-center text-xs font-bold mr-3">
+                  {String.fromCharCode(65 + index)}
+                </span>
+                {option}
+              </div>
+            </motion.button>
+          ))}
+        </div>
+      </div>
+      
+      {/* Hint button */}
+      {!showExplanation && (
+        <div className="mb-4">
+          <button
+            onClick={() => setShowHint(!showHint)}
+            className="text-yellow-400 hover:text-yellow-300 text-sm underline"
+          >
+            {showHint ? 'Hide Hint' : 'Show Hint'}
+          </button>
+          
+          {showHint && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              className="mt-2 p-3 bg-yellow-900/30 border border-yellow-500/40 rounded-lg"
+            >
+              <p className="text-yellow-300 text-sm">
+                💡 Think about the key characteristics of {attack.name} and what makes this attack unique.
+              </p>
+            </motion.div>
+          )}
+        </div>
+      )}
+      
+      {/* Explanation */}
+      {showExplanation && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className={`mb-6 p-4 rounded-lg border ${
+            selectedAnswer === currentQ.correct_answer
+              ? 'border-green-500/40 bg-green-500/10'
+              : 'border-red-500/40 bg-red-500/10'
+          }`}
+        >
+          <div className={`font-semibold mb-2 ${
+            selectedAnswer === currentQ.correct_answer ? 'text-green-400' : 'text-red-400'
+          }`}>
+            {selectedAnswer === currentQ.correct_answer ? '✓ Correct!' : '✗ Incorrect'}
+          </div>
+          <p className="text-gray-300 text-sm">
+            {currentQ.explanation}
+          </p>
+        </motion.div>
+      )}
+      
+      {/* Action buttons */}
+      <div className="flex justify-between">
+        <div>
+          {currentQuestion > 0 && (
+            <button
+              onClick={() => {
+                setCurrentQuestion(currentQuestion - 1);
+                setSelectedAnswer(null);
+                setShowExplanation(false);
+                setShowHint(false);
+              }}
+              className="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors"
+            >
+              Previous
+            </button>
+          )}
+        </div>
+        
+        <div className="space-x-3">
+          {!showExplanation ? (
+            <button
+              onClick={submitAnswer}
+              disabled={selectedAnswer === null}
+              className="px-6 py-2 bg-cyan-600 hover:bg-cyan-700 disabled:bg-gray-600 disabled:cursor-not-allowed rounded-lg transition-colors"
+            >
+              Submit Answer
+            </button>
+          ) : (
+            <button
+              onClick={nextQuestion}
+              className="px-6 py-2 bg-green-600 hover:bg-green-700 rounded-lg transition-colors"
+            >
+              {currentQuestion < questions.length - 1 ? 'Next Question' : 'Finish Quiz'}
+            </button>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
 export const AttackDetail = () => {
   const { attackId } = useParams();
   const navigate = useNavigate();
