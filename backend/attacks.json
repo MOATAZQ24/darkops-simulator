@@ -1,0 +1,298 @@
+{
+  "attacks": [
+    {
+      "id": "ddos_attack",
+      "name": "DDoS Attack",
+      "category": "Network",
+      "description": "Distributed Denial of Service attack that overwhelms servers with traffic",
+      "difficulty": "medium",
+      "estimated_time": 15,
+      "animation_config": {
+        "type": "network_flow",
+        "elements": ["attacker_bots", "target_server", "traffic_flow"],
+        "duration": 30
+      },
+      "steps": [
+        {
+          "id": "step_1",
+          "title": "Botnet Recruitment",
+          "description": "Attacker creates a network of compromised computers (bots)",
+          "visualization": "Show multiple infected computers joining the botnet"
+        },
+        {
+          "id": "step_2", 
+          "title": "Target Identification",
+          "description": "Attacker identifies the target server or service",
+          "visualization": "Highlight target server with crosshairs"
+        },
+        {
+          "id": "step_3",
+          "title": "Traffic Flood",
+          "description": "All bots simultaneously send requests to overwhelm the target",
+          "visualization": "Massive traffic flow from multiple sources to target"
+        },
+        {
+          "id": "step_4",
+          "title": "Service Disruption",
+          "description": "Target server becomes unavailable due to resource exhaustion",
+          "visualization": "Server shows error states, legitimate users blocked"
+        }
+      ],
+      "defenses": [
+        {
+          "strategy": "Rate Limiting",
+          "description": "Implement request rate limits to prevent overwhelming traffic",
+          "effectiveness": "Medium"
+        },
+        {
+          "strategy": "DDoS Protection Services",
+          "description": "Use cloud-based DDoS mitigation services (CloudFlare, AWS Shield)",
+          "effectiveness": "High"
+        },
+        {
+          "strategy": "Traffic Analysis",
+          "description": "Monitor and analyze traffic patterns to identify attacks early",
+          "effectiveness": "Medium"
+        }
+      ],
+      "quiz": {
+        "questions": [
+          {
+            "id": "q1",
+            "question": "What is the primary goal of a DDoS attack?",
+            "options": [
+              "Steal sensitive data",
+              "Make a service unavailable", 
+              "Install malware",
+              "Gain unauthorized access"
+            ],
+            "correct_answer": 1,
+            "explanation": "DDoS attacks aim to make services unavailable by overwhelming them with traffic"
+          },
+          {
+            "id": "q2",
+            "question": "What makes a DDoS attack 'distributed'?",
+            "options": [
+              "It targets multiple servers",
+              "It uses multiple attack vectors",
+              "It comes from many different sources",
+              "It lasts for a long time"
+            ],
+            "correct_answer": 2,
+            "explanation": "DDoS is 'distributed' because the attack traffic comes from many different sources/bots"
+          }
+        ]
+      }
+    },
+    {
+      "id": "ransomware_attack",
+      "name": "Ransomware Attack",
+      "category": "Malware",
+      "description": "Malware that encrypts victim's files and demands payment for decryption",
+      "difficulty": "high",
+      "estimated_time": 20,
+      "animation_config": {
+        "type": "malware_spread",
+        "elements": ["email_entry", "file_encryption", "ransom_note"],
+        "duration": 45
+      },
+      "steps": [
+        {
+          "id": "step_1",
+          "title": "Initial Infection",
+          "description": "Malware enters system through email attachment, malicious link, or exploit",
+          "visualization": "Show email with attachment being opened"
+        },
+        {
+          "id": "step_2",
+          "title": "System Infiltration", 
+          "description": "Ransomware establishes persistence and scans for files",
+          "visualization": "Malware spreading through file system"
+        },
+        {
+          "id": "step_3",
+          "title": "File Encryption",
+          "description": "Important files are encrypted using strong cryptography",
+          "visualization": "Files changing from normal to locked/encrypted state"
+        },
+        {
+          "id": "step_4",
+          "title": "Ransom Demand",
+          "description": "Ransom note displayed demanding payment for decryption key",
+          "visualization": "Ransom note popup with payment instructions"
+        }
+      ],
+      "defenses": [
+        {
+          "strategy": "Regular Backups",
+          "description": "Maintain offline backups to restore files without paying ransom",
+          "effectiveness": "High"
+        },
+        {
+          "strategy": "Email Security",
+          "description": "Implement robust email filtering and user training",
+          "effectiveness": "High"
+        },
+        {
+          "strategy": "Endpoint Protection",
+          "description": "Use advanced anti-malware with behavioral analysis",
+          "effectiveness": "Medium"
+        }
+      ],
+      "quiz": {
+        "questions": [
+          {
+            "id": "q1",
+            "question": "What is the main purpose of ransomware?",
+            "options": [
+              "Spy on user activities",
+              "Steal personal information",
+              "Extort money by encrypting files",
+              "Use computer for cryptocurrency mining"
+            ],
+            "correct_answer": 2,
+            "explanation": "Ransomware's primary purpose is to extort money by encrypting victims' files"
+          }
+        ]
+      }
+    },
+    {
+      "id": "mitm_attack",
+      "name": "Man-in-the-Middle Attack",
+      "category": "Network", 
+      "description": "Attacker intercepts and potentially modifies communications between two parties",
+      "difficulty": "medium",
+      "estimated_time": 12,
+      "animation_config": {
+        "type": "network_interception",
+        "elements": ["user", "attacker", "server", "data_flow"],
+        "duration": 25
+      },
+      "steps": [
+        {
+          "id": "step_1",
+          "title": "Position Establishment",
+          "description": "Attacker positions themselves between victim and target server",
+          "visualization": "Show attacker node inserted into communication path"
+        },
+        {
+          "id": "step_2",
+          "title": "Traffic Interception", 
+          "description": "All communication flows through the attacker's system",
+          "visualization": "Data packets routing through attacker instead of direct connection"
+        },
+        {
+          "id": "step_3",
+          "title": "Data Analysis/Modification",
+          "description": "Attacker can read, modify, or inject new data into the communication",
+          "visualization": "Attacker examining and potentially altering data packets"
+        }
+      ],
+      "defenses": [
+        {
+          "strategy": "HTTPS/TLS Encryption",
+          "description": "Use encrypted connections to protect data in transit",
+          "effectiveness": "High"
+        },
+        {
+          "strategy": "Certificate Pinning",
+          "description": "Verify server certificates to detect interception attempts",
+          "effectiveness": "High"
+        },
+        {
+          "strategy": "VPN Usage",
+          "description": "Use VPN to encrypt all network traffic",
+          "effectiveness": "Medium"
+        }
+      ],
+      "quiz": {
+        "questions": [
+          {
+            "id": "q1",
+            "question": "In a MITM attack, where is the attacker positioned?",
+            "options": [
+              "On the victim's computer",
+              "On the target server",
+              "Between victim and server",
+              "In a different network entirely"
+            ],
+            "correct_answer": 2,
+            "explanation": "MITM attacks require the attacker to be positioned between the victim and target"
+          }
+        ]
+      }
+    },
+    {
+      "id": "sql_injection",
+      "name": "SQL Injection",
+      "category": "Web/App",
+      "description": "Attack that injects malicious SQL code into application queries",
+      "difficulty": "medium",
+      "estimated_time": 10,
+      "animation_config": {
+        "type": "code_injection",
+        "elements": ["web_form", "database", "malicious_query"],
+        "duration": 20
+      },
+      "steps": [
+        {
+          "id": "step_1",
+          "title": "Vulnerable Input Identification",
+          "description": "Attacker finds web form or parameter that doesn't sanitize input",
+          "visualization": "Highlight vulnerable input field on webpage"
+        },
+        {
+          "id": "step_2",
+          "title": "Malicious Query Crafting",
+          "description": "Attacker crafts SQL code to manipulate database queries",
+          "visualization": "Show malicious SQL code being prepared"
+        },
+        {
+          "id": "step_3",
+          "title": "Query Injection",
+          "description": "Malicious SQL is inserted into application's database query",
+          "visualization": "Show normal query being modified with malicious code"
+        },
+        {
+          "id": "step_4",
+          "title": "Data Extraction/Manipulation", 
+          "description": "Attacker gains unauthorized access to database information",
+          "visualization": "Database returning sensitive data to attacker"
+        }
+      ],
+      "defenses": [
+        {
+          "strategy": "Parameterized Queries",
+          "description": "Use prepared statements to separate code from data",
+          "effectiveness": "High"
+        },
+        {
+          "strategy": "Input Validation",
+          "description": "Validate and sanitize all user input",
+          "effectiveness": "High"
+        },
+        {
+          "strategy": "Least Privilege",
+          "description": "Database users should have minimal necessary permissions",
+          "effectiveness": "Medium"
+        }
+      ],
+      "quiz": {
+        "questions": [
+          {
+            "id": "q1",
+            "question": "What is the main cause of SQL injection vulnerabilities?",
+            "options": [
+              "Weak passwords",
+              "Unencrypted databases",
+              "Unsanitized user input",
+              "Missing database backups"
+            ],
+            "correct_answer": 2,
+            "explanation": "SQL injection occurs when user input is not properly sanitized before being used in SQL queries"
+          }
+        ]
+      }
+    }
+  ]
+}
