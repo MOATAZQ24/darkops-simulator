@@ -270,39 +270,193 @@ const NetworkVisualization = ({ step, isPlaying, animationKey }) => {
   );
 };
 
-const MalwareVisualization = ({ step, isPlaying, animationKey }) => (
-  <motion.div
-    key={animationKey}
-    className="w-full h-full relative"
-    initial={{ opacity: 0 }}
-    animate={{ opacity: 1 }}
-  >
-    <div className="absolute inset-0 flex items-center justify-center">
-      <div className="grid grid-cols-4 gap-4">
-        {[...Array(16)].map((_, i) => (
+const MalwareVisualization = ({ step, isPlaying, animationKey }) => {
+  const stepTitle = step.title.toLowerCase();
+  
+  // Ransomware-specific visualization
+  if (stepTitle.includes('ransom') || stepTitle.includes('encryption')) {
+    return (
+      <motion.div
+        key={animationKey}
+        className="w-full h-full relative"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+      >
+        {/* File system grid */}
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="grid grid-cols-6 gap-3">
+            {[...Array(30)].map((_, i) => (
+              <motion.div
+                key={i}
+                initial={{ scale: 1, backgroundColor: "#1f2937", borderColor: "#374151" }}
+                animate={{
+                  scale: stepTitle.includes('encryption') ? [1, 1.1, 1] : 1,
+                  backgroundColor: stepTitle.includes('encryption') ? 
+                    ["#1f2937", "#dc2626", "#7f1d1d"] : "#1f2937",
+                  borderColor: stepTitle.includes('encryption') ?
+                    ["#374151", "#dc2626", "#ef4444"] : "#374151"
+                }}
+                transition={{
+                  duration: 0.6,
+                  delay: i * 0.05,
+                  repeat: stepTitle.includes('encryption') ? Infinity : 0,
+                  repeatDelay: 2
+                }}
+                className="w-6 h-6 rounded border-2 flex items-center justify-center"
+              >
+                {stepTitle.includes('encryption') && (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: i * 0.05 }}
+                    className="w-2 h-2 bg-red-400 rounded-full"
+                  />
+                )}
+              </motion.div>
+            ))}
+          </div>
+        </div>
+        
+        {/* Overlay text */}
+        <div className="absolute inset-0 flex items-center justify-center">
+          {stepTitle.includes('encryption') && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 1 }}
+              className="text-red-400 text-lg font-bold bg-gray-900/80 px-4 py-2 rounded border border-red-500"
+            >
+              🔒 FILES ENCRYPTED
+            </motion.div>
+          )}
+          {stepTitle.includes('ransom') && (
+            <motion.div
+              initial={{ opacity: 0, y: 50 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5 }}
+              className="text-red-400 text-center bg-gray-900/90 p-4 rounded border border-red-500 max-w-xs"
+            >
+              <div className="text-xl font-bold mb-2">⚠️ RANSOM DEMAND</div>
+              <div className="text-sm">Pay 0.5 BTC to decrypt your files</div>
+              <div className="text-xs mt-2 text-red-300">Time remaining: 72:00:00</div>
+            </motion.div>
+          )}
+        </div>
+      </motion.div>
+    );
+  }
+  
+  // Worm propagation visualization
+  if (stepTitle.includes('worm') || stepTitle.includes('propagation') || stepTitle.includes('replication')) {
+    return (
+      <motion.div
+        key={animationKey}
+        className="w-full h-full relative"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+      >
+        {/* Network topology */}
+        <div className="absolute inset-0">
+          {/* Central infected node */}
           <motion.div
-            key={i}
-            initial={{ scale: 1, backgroundColor: "#1f2937" }}
-            animate={{
-              scale: [1, 1.2, 1],
-              backgroundColor: ["#1f2937", "#ef4444", "#1f2937"]
-            }}
-            transition={{
-              duration: 0.8,
-              delay: i * 0.1,
-              repeat: Infinity,
-              repeatDelay: 2
-            }}
-            className="w-8 h-8 rounded border border-gray-600"
-          />
-        ))}
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ delay: 0.2 }}
+            className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
+          >
+            <div className="w-16 h-16 bg-red-500/30 border-2 border-red-500 rounded-full flex items-center justify-center animate-pulse">
+              <Target className="w-8 h-8 text-red-400" />
+            </div>
+            <span className="text-red-400 text-xs mt-1 block text-center">Patient Zero</span>
+          </motion.div>
+          
+          {/* Surrounding nodes */}
+          {[...Array(8)].map((_, i) => {
+            const angle = (i * 45) * Math.PI / 180;
+            const radius = 80;
+            const x = 50 + (radius * Math.cos(angle)) / 3;
+            const y = 50 + (radius * Math.sin(angle)) / 3;
+            
+            return (
+              <motion.div
+                key={i}
+                initial={{ scale: 0, backgroundColor: "#1f2937" }}
+                animate={{ 
+                  scale: 1,
+                  backgroundColor: stepTitle.includes('propagation') ? 
+                    ["#1f2937", "#dc2626"] : "#1f2937"
+                }}
+                transition={{ 
+                  delay: 0.5 + i * 0.2,
+                  backgroundColor: { delay: 1 + i * 0.3 }
+                }}
+                className="absolute w-12 h-12 border-2 border-gray-600 rounded-full flex items-center justify-center"
+                style={{
+                  left: `${x}%`,
+                  top: `${y}%`,
+                  transform: 'translate(-50%, -50%)'
+                }}
+              >
+                <div className="w-2 h-2 bg-cyan-400 rounded-full" />
+                
+                {/* Connection lines */}
+                <motion.div
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ delay: 1 + i * 0.1 }}
+                  className="absolute w-0.5 h-16 bg-gradient-to-r from-red-500 to-transparent origin-bottom"
+                  style={{
+                    transform: `rotate(${180 + i * 45}deg)`,
+                    bottom: '50%'
+                  }}
+                />
+              </motion.div>
+            );
+          })}
+        </div>
+        
+        <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-red-400 text-sm font-mono animate-pulse">
+          WORM SPREADING...
+        </div>
+      </motion.div>
+    );
+  }
+  
+  // Generic malware visualization
+  return (
+    <motion.div
+      key={animationKey}
+      className="w-full h-full relative"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+    >
+      <div className="absolute inset-0 flex items-center justify-center">
+        <div className="grid grid-cols-4 gap-4">
+          {[...Array(16)].map((_, i) => (
+            <motion.div
+              key={i}
+              initial={{ scale: 1, backgroundColor: "#1f2937" }}
+              animate={{
+                scale: [1, 1.2, 1],
+                backgroundColor: ["#1f2937", "#ef4444", "#1f2937"]
+              }}
+              transition={{
+                duration: 0.8,
+                delay: i * 0.1,
+                repeat: Infinity,
+                repeatDelay: 2
+              }}
+              className="w-8 h-8 rounded border border-gray-600"
+            />
+          ))}
+        </div>
       </div>
-    </div>
-    <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-red-400 text-lg font-bold">
-      INFECTION SPREADING
-    </div>
-  </motion.div>
-);
+      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-red-400 text-lg font-bold">
+        INFECTION SPREADING
+      </div>
+    </motion.div>
+  );
+};
 
 const WebVisualization = ({ step, isPlaying, animationKey }) => (
   <motion.div
