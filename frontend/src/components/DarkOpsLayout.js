@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Shield, 
   Wifi, 
@@ -14,8 +14,11 @@ import {
   Search,
   Menu,
   X,
-  User
+  User,
+  Clock,
+  Target
 } from 'lucide-react';
+import axios from 'axios';
 
 const attackCategories = [
   { id: 'network', name: 'Network', icon: Wifi, color: '#00FFFF' },
