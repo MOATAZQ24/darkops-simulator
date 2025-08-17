@@ -146,7 +146,7 @@ export const DarkOpsLayout = ({ children }) => {
         </div>
 
         {/* Search */}
-        <div className="p-4">
+        <div className="p-4 relative">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
             <input
@@ -157,6 +157,56 @@ export const DarkOpsLayout = ({ children }) => {
               className="w-full pl-10 pr-4 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:border-cyan-500 focus:outline-none focus:ring-1 focus:ring-cyan-500 text-white placeholder-gray-400"
             />
           </div>
+          
+          {/* Search Results Dropdown */}
+          <AnimatePresence>
+            {showSearchResults && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                className="absolute top-full left-4 right-4 mt-1 bg-gray-800 border border-gray-700 rounded-lg shadow-xl z-50 max-h-64 overflow-y-auto"
+              >
+                {searchResults.length > 0 ? (
+                  <div className="p-2">
+                    {searchResults.map((attack) => (
+                      <button
+                        key={attack.id}
+                        onClick={() => handleSearchSelect(attack.id)}
+                        className="w-full text-left p-3 hover:bg-gray-700 rounded-lg transition-colors"
+                      >
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1">
+                            <h4 className="font-medium text-white">{attack.name}</h4>
+                            <p className="text-gray-400 text-sm mt-1">{attack.category}</p>
+                            <p className="text-gray-500 text-xs mt-1 line-clamp-2">{attack.description}</p>
+                          </div>
+                          <div className="ml-3 flex items-center space-x-2">
+                            <span className={`text-xs px-2 py-1 rounded ${
+                              attack.difficulty === 'easy' ? 'bg-green-500/20 text-green-400' :
+                              attack.difficulty === 'medium' ? 'bg-yellow-500/20 text-yellow-400' :
+                              'bg-red-500/20 text-red-400'
+                            }`}>
+                              {attack.difficulty}
+                            </span>
+                            <div className="flex items-center text-gray-500 text-xs">
+                              <Clock className="w-3 h-3 mr-1" />
+                              {attack.estimated_time}m
+                            </div>
+                          </div>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="p-4 text-center text-gray-400">
+                    <Target className="w-8 h-8 mx-auto mb-2" />
+                    <p>No attacks found for "{searchQuery}"</p>
+                  </div>
+                )}
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
 
         {/* Navigation */}
