@@ -293,6 +293,219 @@
           }
         ]
       }
+    },
+    {
+      "id": "xss_attack",
+      "name": "Cross-Site Scripting (XSS)",
+      "category": "Web/App",
+      "description": "Attack that injects malicious scripts into web pages viewed by other users",
+      "difficulty": "medium",
+      "estimated_time": 12,
+      "animation_config": {
+        "type": "script_injection",
+        "elements": ["web_page", "malicious_script", "victim_browser"],
+        "duration": 30
+      },
+      "steps": [
+        {
+          "id": "step_1",
+          "title": "Vulnerable Input Discovery",
+          "description": "Attacker identifies input fields that don't properly sanitize user data",
+          "visualization": "Highlight vulnerable form fields and comment sections"
+        },
+        {
+          "id": "step_2",
+          "title": "Malicious Script Crafting",
+          "description": "Attacker creates JavaScript payload to steal data or manipulate page",
+          "visualization": "Show malicious JavaScript code being prepared"
+        },
+        {
+          "id": "step_3",
+          "title": "Script Injection",
+          "description": "Malicious script is injected into the web page through vulnerable input",
+          "visualization": "Script being inserted into page source code"
+        },
+        {
+          "id": "step_4",
+          "title": "Victim Exploitation",
+          "description": "When other users visit the page, the malicious script executes in their browser",
+          "visualization": "Script executing in victim's browser, stealing cookies/data"
+        }
+      ],
+      "defenses": [
+        {
+          "strategy": "Input Validation & Sanitization",
+          "description": "Properly validate and sanitize all user input before displaying",
+          "effectiveness": "High"
+        },
+        {
+          "strategy": "Content Security Policy (CSP)",
+          "description": "Implement CSP headers to restrict script execution",
+          "effectiveness": "High"
+        },
+        {
+          "strategy": "Output Encoding",
+          "description": "Encode output data to prevent script execution",
+          "effectiveness": "High"
+        },
+        {
+          "strategy": "HttpOnly Cookies",
+          "description": "Use HttpOnly flags to prevent JavaScript access to cookies",
+          "effectiveness": "Medium"
+        }
+      ],
+      "quiz": {
+        "questions": [
+          {
+            "id": "q1",
+            "question": "What makes XSS attacks dangerous?",
+            "options": [
+              "They can crash the server",
+              "They execute malicious code in victim's browser",
+              "They encrypt user files",
+              "They steal server passwords"
+            ],
+            "correct_answer": 1,
+            "explanation": "XSS attacks are dangerous because they execute malicious JavaScript in victim's browsers, potentially stealing data or performing unauthorized actions"
+          },
+          {
+            "id": "q2",
+            "question": "Which is the MOST effective defense against XSS?",
+            "options": [
+              "Using HTTPS",
+              "Strong passwords",
+              "Input validation and output encoding",
+              "Firewall protection"
+            ],
+            "correct_answer": 2,
+            "explanation": "Input validation and output encoding are the most effective defenses as they prevent malicious scripts from being injected and executed"
+          },
+          {
+            "id": "q3",
+            "question": "What does CSP (Content Security Policy) help prevent?",
+            "options": [
+              "SQL injection attacks",
+              "Unauthorized script execution",
+              "Password brute force",
+              "DDoS attacks"
+            ],
+            "correct_answer": 1,
+            "explanation": "CSP helps prevent XSS by controlling which scripts can execute on a webpage, blocking unauthorized script sources"
+          }
+        ]
+      }
+    },
+    {
+      "id": "worm_attack",
+      "name": "Computer Worm",
+      "category": "Malware",
+      "description": "Self-replicating malware that spreads across networks without human interaction",
+      "difficulty": "high",
+      "estimated_time": 18,
+      "animation_config": {
+        "type": "network_propagation",
+        "elements": ["infected_host", "network_spread", "replication"],
+        "duration": 40
+      },
+      "steps": [
+        {
+          "id": "step_1",
+          "title": "Initial Infection",
+          "description": "Worm enters the network through vulnerable service or infected media",
+          "visualization": "Show worm entering first computer through network port or USB"
+        },
+        {
+          "id": "step_2",
+          "title": "System Reconnaissance",
+          "description": "Worm scans the local network for other vulnerable systems",
+          "visualization": "Network scanning animation showing discovery of other hosts"
+        },
+        {
+          "id": "step_3",
+          "title": "Self-Replication",
+          "description": "Worm copies itself to newly discovered vulnerable systems",
+          "visualization": "Show worm creating copies and transferring to other machines"
+        },
+        {
+          "id": "step_4",
+          "title": "Network Propagation",
+          "description": "Process repeats exponentially as each infected host continues spreading",
+          "visualization": "Exponential spread animation across network topology"
+        },
+        {
+          "id": "step_5",
+          "title": "Payload Execution",
+          "description": "Worm may execute additional malicious activities on infected systems",
+          "visualization": "Show various payloads executing: data theft, system damage, botnet formation"
+        }
+      ],
+      "defenses": [
+        {
+          "strategy": "Network Segmentation",
+          "description": "Isolate critical systems to limit worm propagation",
+          "effectiveness": "High"
+        },
+        {
+          "strategy": "Patch Management",
+          "description": "Keep systems updated to close security vulnerabilities",
+          "effectiveness": "High"
+        },
+        {
+          "strategy": "Network Monitoring",
+          "description": "Detect unusual network traffic patterns indicating worm activity",
+          "effectiveness": "Medium"
+        },
+        {
+          "strategy": "Endpoint Protection",
+          "description": "Deploy anti-malware with behavioral analysis capabilities",
+          "effectiveness": "Medium"
+        },
+        {
+          "strategy": "Access Controls",
+          "description": "Limit network access and user privileges to reduce attack surface",
+          "effectiveness": "Medium"
+        }
+      ],
+      "quiz": {
+        "questions": [
+          {
+            "id": "q1",
+            "question": "What distinguishes a worm from a virus?",
+            "options": [
+              "Worms are more dangerous",
+              "Worms spread without human interaction",
+              "Worms only affect servers",
+              "Worms don't replicate"
+            ],
+            "correct_answer": 1,
+            "explanation": "Unlike viruses, worms can spread automatically across networks without requiring human action like opening files"
+          },
+          {
+            "id": "q2",
+            "question": "How do worms typically discover new targets?",
+            "options": [
+              "Social engineering",
+              "Email attachments",
+              "Network scanning",
+              "Physical access"
+            ],
+            "correct_answer": 2,
+            "explanation": "Worms use network scanning techniques to automatically discover vulnerable systems to infect"
+          },
+          {
+            "id": "q3",
+            "question": "What is the most effective way to prevent worm outbreaks?",
+            "options": [
+              "Using antivirus software",
+              "Regular system patching",
+              "Strong passwords",
+              "Email filtering"
+            ],
+            "correct_answer": 1,
+            "explanation": "Regular patching closes the security vulnerabilities that worms exploit to spread across networks"
+          }
+        ]
+      }
     }
   ]
 }
