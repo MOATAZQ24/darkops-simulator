@@ -120,13 +120,13 @@ backend:
           agent: "testing"
           comment: "✅ COMPREHENSIVE BACKEND TESTING COMPLETED - All 21 tests passed (100% success rate). Session Management: ✅ Create sessions with/without nicknames, ✅ Session retrieval with last_active updates, ✅ 404 error handling. Attack Data: ✅ Retrieved all 4 attacks (ddos_attack, ransomware_attack, mitm_attack, sql_injection), ✅ Individual attack retrieval, ✅ 404 for non-existent attacks. Progress Tracking: ✅ Create/update progress, ✅ Attack completion logic working correctly, ✅ Session stats updates. Quiz Management: ✅ Submit quizzes with correct/incorrect answers, ✅ Score calculation accurate, ✅ Quiz scores retrieval, ✅ Session quiz score tracking. All endpoints properly handle error cases and return appropriate HTTP status codes."
 
-  - task: "Attack Data JSON Structure"
+  - task: "Attack Data JSON Structure - Enhanced with XSS and Worm"
     implemented: true
-    working: true
+    working: "NA"
     file: "/app/backend/attacks.json"
     stuck_count: 0
     priority: "high"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
         - working: "NA"
           agent: "main"
@@ -134,6 +134,9 @@ backend:
         - working: true
           agent: "testing"
           comment: "✅ ATTACK DATA STRUCTURE VERIFIED - Successfully tested all 4 attacks (ddos_attack, ransomware_attack, mitm_attack, sql_injection). Each attack properly structured with: ✅ Complete metadata (name, category, description, difficulty), ✅ Animation configurations, ✅ 4-step attack flows, ✅ Defense strategies, ✅ Quiz questions with correct answers. All attacks accessible via API endpoints and quiz scoring works correctly for all attack types."
+        - working: "NA"
+          agent: "main"
+          comment: "PHASE 3: Added two new high-priority attacks: XSS Attack (Cross-Site Scripting) and Computer Worm. XSS includes 4 steps with script injection visualization, comprehensive defenses (Input Validation, CSP, Output Encoding), and 3 quiz questions. Worm includes 5-step propagation process with network spread visualization, defenses (Network Segmentation, Patch Management), and 3 quiz questions. Both attacks have detailed animation configs and explanations."
 
 frontend:
   - task: "DarkOps Lab UI Implementation - Core Layout & Navigation"
