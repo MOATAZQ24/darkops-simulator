@@ -114,53 +114,161 @@ const SimulationPanel = ({ attack, currentStep, isPlaying, onStepChange }) => {
 };
 
 // Visualization Components
-const NetworkVisualization = ({ step, isPlaying, animationKey }) => (
-  <motion.div
-    key={animationKey}
-    className="w-full h-full relative"
-    initial={{ opacity: 0 }}
-    animate={{ opacity: 1 }}
-  >
-    {/* Network nodes */}
-    <div className="absolute inset-0 flex items-center justify-around">
-      {/* Attacker */}
+const NetworkVisualization = ({ step, isPlaying, animationKey }) => {
+  const stepId = step.id;
+  
+  // DDoS-specific visualization
+  if (stepId.includes('ddos') || step.title.toLowerCase().includes('botnet') || step.title.toLowerCase().includes('flood')) {
+    return (
       <motion.div
-        initial={{ scale: 0 }}
-        animate={{ scale: 1 }}
-        transition={{ delay: 0.2 }}
-        className="flex flex-col items-center"
+        key={animationKey}
+        className="w-full h-full relative"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
       >
-        <div className="w-16 h-16 bg-red-500/20 border-2 border-red-500 rounded-full flex items-center justify-center">
-          <Target className="w-8 h-8 text-red-400" />
+        {/* Multiple bot nodes for DDoS */}
+        <div className="absolute inset-0">
+          {/* Botnet nodes */}
+          {[...Array(6)].map((_, i) => (
+            <motion.div
+              key={i}
+              initial={{ scale: 0, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ delay: i * 0.1 }}
+              className="absolute"
+              style={{
+                left: `${15 + (i % 3) * 25}%`,
+                top: `${20 + Math.floor(i / 3) * 40}%`,
+              }}
+            >
+              <div className="w-12 h-12 bg-red-500/20 border-2 border-red-500 rounded-full flex items-center justify-center">
+                <Target className="w-5 h-5 text-red-400" />
+              </div>
+              <span className="text-red-400 text-xs mt-1 block text-center">Bot {i + 1}</span>
+              
+              {/* Traffic flow from bots */}
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: [0, 1, 0] }}
+                transition={{ duration: 1.5, delay: i * 0.2, repeat: Infinity }}
+                className="absolute top-6 left-12 w-2 h-2 bg-red-500 rounded-full"
+              />
+            </motion.div>
+          ))}
+          
+          {/* Central target server */}
+          <motion.div
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ delay: 0.8 }}
+            className="absolute right-16 top-1/2 transform -translate-y-1/2 flex flex-col items-center"
+          >
+            <div className={`w-20 h-20 bg-cyan-500/20 border-2 border-cyan-500 rounded-full flex items-center justify-center ${
+              step.title.toLowerCase().includes('disruption') ? 'animate-pulse border-red-500 bg-red-500/20' : ''
+            }`}>
+              <Shield className={`w-10 h-10 ${step.title.toLowerCase().includes('disruption') ? 'text-red-400' : 'text-cyan-400'}`} />
+            </div>
+            <span className={`text-sm mt-2 ${step.title.toLowerCase().includes('disruption') ? 'text-red-400' : 'text-cyan-400'}`}>
+              Target Server
+            </span>
+            {step.title.toLowerCase().includes('disruption') && (
+              <span className="text-red-400 text-xs animate-pulse">OVERLOADED</span>
+            )}
+          </motion.div>
+          
+          {/* Traffic flow lines */}
+          {[...Array(6)].map((_, i) => (
+            <motion.div
+              key={`flow-${i}`}
+              className="absolute h-0.5 bg-gradient-to-r from-red-500 to-cyan-500"
+              style={{
+                left: `${20 + (i % 3) * 25}%`,
+                top: `${25 + Math.floor(i / 3) * 40}%`,
+                width: `${50 - (i % 3) * 10}%`,
+                transformOrigin: 'left center',
+              }}
+              initial={{ scaleX: 0 }}
+              animate={{ scaleX: [0, 1, 0] }}
+              transition={{
+                duration: 2,
+                delay: i * 0.3,
+                repeat: Infinity,
+                repeatDelay: 1,
+              }}
+            />
+          ))}
         </div>
-        <span className="text-red-400 text-sm mt-2">Attacker</span>
       </motion.div>
-
-      {/* Data flow animation */}
+    );
+  }
+  
+  // MITM visualization
+  return (
+    <motion.div
+      key={animationKey}
+      className="w-full h-full relative"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+    >
+      <div className="absolute inset-0 flex items-center justify-between px-8">
+        {/* User */}
+        <motion.div
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          transition={{ delay: 0.2 }}
+          className="flex flex-col items-center"
+        >
+          <div className="w-16 h-16 bg-blue-500/20 border-2 border-blue-500 rounded-full flex items-center justify-center">
+            <Target className="w-8 h-8 text-blue-400" />
+          </div>
+          <span className="text-blue-400 text-sm mt-2">User</span>
+        </motion.div>
+        
+        {/* Attacker in the middle */}
+        <motion.div
+          initial={{ scale: 0, y: 50 }}
+          animate={{ scale: 1, y: 0 }}
+          transition={{ delay: 0.5 }}
+          className="flex flex-col items-center"
+        >
+          <div className="w-16 h-16 bg-red-500/20 border-2 border-red-500 rounded-full flex items-center justify-center animate-pulse">
+            <Target className="w-8 h-8 text-red-400" />
+          </div>
+          <span className="text-red-400 text-sm mt-2">Attacker</span>
+          <span className="text-red-400 text-xs animate-pulse">INTERCEPTING</span>
+        </motion.div>
+        
+        {/* Server */}
+        <motion.div
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          transition={{ delay: 0.4 }}
+          className="flex flex-col items-center"
+        >
+          <div className="w-16 h-16 bg-green-500/20 border-2 border-green-500 rounded-full flex items-center justify-center">
+            <Shield className="w-8 h-8 text-green-400" />
+          </div>
+          <span className="text-green-400 text-sm mt-2">Server</span>
+        </motion.div>
+      </div>
+      
+      {/* Data flow paths */}
       <motion.div
-        initial={{ pathLength: 0 }}
-        animate={{ pathLength: 1 }}
-        transition={{ duration: 2, delay: 0.5, repeat: Infinity }}
-        className="flex-1 flex items-center justify-center"
+        className="absolute top-1/2 left-8 right-8 h-0.5"
+        initial={{ scaleX: 0 }}
+        animate={{ scaleX: 1 }}
+        transition={{ delay: 0.8, duration: 2 }}
       >
-        <div className="w-full h-1 bg-gradient-to-r from-red-500 to-cyan-500 rounded animate-pulse" />
+        <div className="w-full h-full bg-gradient-to-r from-blue-500 via-red-500 to-green-500 rounded" />
+        <motion.div
+          className="absolute top-0 left-0 w-2 h-2 bg-white rounded-full -translate-y-1/2"
+          animate={{ x: ['0%', '48%', '100%'] }}
+          transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
+        />
       </motion.div>
-
-      {/* Target */}
-      <motion.div
-        initial={{ scale: 0 }}
-        animate={{ scale: 1 }}
-        transition={{ delay: 0.4 }}
-        className="flex flex-col items-center"
-      >
-        <div className="w-16 h-16 bg-cyan-500/20 border-2 border-cyan-500 rounded-full flex items-center justify-center">
-          <Shield className="w-8 h-8 text-cyan-400" />
-        </div>
-        <span className="text-cyan-400 text-sm mt-2">Target</span>
-      </motion.div>
-    </div>
-  </motion.div>
-);
+    </motion.div>
+  );
+};
 
 const MalwareVisualization = ({ step, isPlaying, animationKey }) => (
   <motion.div
