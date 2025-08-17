@@ -31,6 +31,9 @@ const attackCategories = [
   { id: 'cloud', name: 'Cloud Attacks', icon: Cloud, color: '#00BFFF' }
 ];
 
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+const API = `${BACKEND_URL}/api`;
+
 export const DarkOpsLayout = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
