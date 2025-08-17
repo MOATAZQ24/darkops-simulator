@@ -37,12 +37,55 @@ const API = `${BACKEND_URL}/api`;
 export const DarkOpsLayout = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
+  const [attacks, setAttacks] = useState([]);
+  const [showSearchResults, setShowSearchResults] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
+
+  // Fetch attacks for search functionality
+  useEffect(() => {
+    const fetchAttacks = async () => {
+      try {
+        const response = await axios.get(`${API}/attacks`);
+        setAttacks(response.data);
+      } catch (error) {
+        console.error('Failed to fetch attacks:', error);
+      }
+    };
+    fetchAttacks();
+  }, []);
 
   // Close sidebar on route change (mobile)
   useEffect(() => {
     setSidebarOpen(false);
   }, [location]);
+
+  // Handle search
+  useEffect(() => {
+    if (searchQuery.trim() === '') {
+      setSearchResults([]);
+      setShowSearchResults(false);
+      return;
+    }
+
+    const query = searchQuery.toLowerCase();
+    const results = attacks.filter(attack => 
+      attack.name.toLowerCase().includes(query) ||
+      attack.category.toLowerCase().includes(query) ||
+      attack.description.toLowerCase().includes(query) ||
+      attack.difficulty.toLowerCase().includes(query)
+    );
+    
+    setSearchResults(results);
+    setShowSearchResults(true);
+  }, [searchQuery, attacks]);
+
+  const handleSearchSelect = (attackId) => {
+    navigate(`/attack/${attackId}`);
+    setSearchQuery('');
+    setShowSearchResults(false);
+  };
 
   const sidebarVariants = {
     open: {
