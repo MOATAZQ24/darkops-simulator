@@ -458,39 +458,182 @@ const MalwareVisualization = ({ step, isPlaying, animationKey }) => {
   );
 };
 
-const WebVisualization = ({ step, isPlaying, animationKey }) => (
-  <motion.div
-    key={animationKey}
-    className="w-full h-full relative flex items-center justify-center"
-    initial={{ opacity: 0 }}
-    animate={{ opacity: 1 }}
-  >
-    {/* Browser window mockup */}
-    <div className="w-80 h-60 bg-gray-800 border border-gray-600 rounded-lg overflow-hidden">
-      <div className="bg-gray-700 p-2 flex items-center space-x-2">
-        <div className="flex space-x-1">
-          <div className="w-3 h-3 bg-red-500 rounded-full"></div>
-          <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
-          <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+const WebVisualization = ({ step, isPlaying, animationKey }) => {
+  const stepTitle = step.title.toLowerCase();
+  
+  // SQL Injection visualization
+  if (stepTitle.includes('sql') || stepTitle.includes('query') || stepTitle.includes('database')) {
+    return (
+      <motion.div
+        key={animationKey}
+        className="w-full h-full relative flex items-center justify-center"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+      >
+        {/* Browser window mockup */}
+        <div className="w-80 h-60 bg-gray-800 border border-gray-600 rounded-lg overflow-hidden">
+          <div className="bg-gray-700 p-2 flex items-center space-x-2">
+            <div className="flex space-x-1">
+              <div className="w-3 h-3 bg-red-500 rounded-full"></div>
+              <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
+              <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+            </div>
+            <div className="flex-1 bg-gray-600 rounded px-2 py-1 text-xs text-gray-300">
+              https://vulnerable-site.com/login
+            </div>
+          </div>
+          
+          {/* Content area */}
+          <div className="p-4 space-y-4">
+            {/* Login form */}
+            <div className="space-y-2">
+              <div className="text-white text-sm">Login Form:</div>
+              <div className="bg-gray-700 p-2 rounded">
+                <input 
+                  type="text" 
+                  placeholder="Username" 
+                  className="w-full bg-gray-600 text-white p-1 rounded text-xs"
+                  readOnly
+                  value={stepTitle.includes('injection') ? "admin'; DROP TABLE users; --" : "admin"}
+                />
+              </div>
+            </div>
+            
+            {/* SQL Query display */}
+            {stepTitle.includes('injection') && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="bg-red-900/50 border border-red-500 p-2 rounded"
+              >
+                <div className="text-red-400 text-xs font-mono">
+                  SQL: SELECT * FROM users WHERE username = 'admin'; DROP TABLE users; --'
+                </div>
+              </motion.div>
+            )}
+            
+            {stepTitle.includes('extraction') && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.5 }}
+                className="bg-green-900/50 border border-green-500 p-2 rounded"
+              >
+                <div className="text-green-400 text-xs">
+                  📊 Database compromised! Extracting user data...
+                </div>
+              </motion.div>
+            )}
+          </div>
         </div>
-        <div className="flex-1 bg-gray-600 rounded px-2 py-1 text-xs text-gray-300">
-          https://vulnerable-site.com
+      </motion.div>
+    );
+  }
+  
+  // XSS visualization
+  if (stepTitle.includes('xss') || stepTitle.includes('script') || stepTitle.includes('injection')) {
+    return (
+      <motion.div
+        key={animationKey}
+        className="w-full h-full relative flex items-center justify-center"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+      >
+        {/* Browser window */}
+        <div className="w-80 h-60 bg-gray-800 border border-gray-600 rounded-lg overflow-hidden">
+          <div className="bg-gray-700 p-2 flex items-center space-x-2">
+            <div className="flex space-x-1">
+              <div className="w-3 h-3 bg-red-500 rounded-full"></div>
+              <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
+              <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+            </div>
+            <div className="flex-1 bg-gray-600 rounded px-2 py-1 text-xs text-gray-300">
+              https://social-site.com/comments
+            </div>
+          </div>
+          
+          <div className="p-4 space-y-4">
+            {/* Comment form */}
+            <div className="space-y-2">
+              <div className="text-white text-sm">Post Comment:</div>
+              <div className="bg-gray-700 p-2 rounded">
+                <textarea 
+                  className="w-full bg-gray-600 text-white p-1 rounded text-xs h-16 resize-none"
+                  readOnly
+                  value={stepTitle.includes('script') ? 
+                    '<script>alert("XSS Attack!"); document.location="http://evil.com"</script>' : 
+                    'This is a normal comment'
+                  }
+                />
+              </div>
+            </div>
+            
+            {/* XSS execution */}
+            {stepTitle.includes('exploitation') && (
+              <motion.div
+                initial={{ scale: 0, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ delay: 0.5 }}
+                className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-red-600 text-white p-4 rounded shadow-2xl border-2 border-red-400"
+              >
+                <div className="text-center">
+                  <div className="text-lg font-bold">⚠️ XSS ALERT!</div>
+                  <div className="text-sm mt-1">Malicious script executed!</div>
+                  <div className="text-xs mt-2">Stealing cookies...</div>
+                </div>
+              </motion.div>
+            )}
+            
+            {stepTitle.includes('injection') && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="text-orange-400 text-xs font-mono bg-orange-900/50 p-2 rounded border border-orange-500"
+              >
+                &gt; Malicious script injected into page...
+              </motion.div>
+            )}
+          </div>
+        </div>
+      </motion.div>
+    );
+  }
+  
+  // Generic web attack
+  return (
+    <motion.div
+      key={animationKey}
+      className="w-full h-full relative flex items-center justify-center"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+    >
+      {/* Browser window mockup */}
+      <div className="w-80 h-60 bg-gray-800 border border-gray-600 rounded-lg overflow-hidden">
+        <div className="bg-gray-700 p-2 flex items-center space-x-2">
+          <div className="flex space-x-1">
+            <div className="w-3 h-3 bg-red-500 rounded-full"></div>
+            <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
+            <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+          </div>
+          <div className="flex-1 bg-gray-600 rounded px-2 py-1 text-xs text-gray-300">
+            https://vulnerable-site.com
+          </div>
+        </div>
+        <div className="p-4 space-y-4">
+          <motion.div
+            initial={{ opacity: 0.5 }}
+            animate={{ opacity: [0.5, 1, 0.5] }}
+            transition={{ duration: 2, repeat: Infinity }}
+            className="h-4 bg-gradient-to-r from-red-500 to-transparent rounded"
+          />
+          <div className="text-red-400 text-xs font-mono">
+            &gt; Injecting malicious payload...
+          </div>
         </div>
       </div>
-      <div className="p-4 space-y-4">
-        <motion.div
-          initial={{ opacity: 0.5 }}
-          animate={{ opacity: [0.5, 1, 0.5] }}
-          transition={{ duration: 2, repeat: Infinity }}
-          className="h-4 bg-gradient-to-r from-red-500 to-transparent rounded"
-        />
-        <div className="text-red-400 text-xs font-mono">
-          &gt; Injecting malicious payload...
-        </div>
-      </div>
-    </div>
-  </motion.div>
-);
+    </motion.div>
+  );
+};
 
 const GenericVisualization = ({ step, isPlaying, animationKey }) => (
   <motion.div
