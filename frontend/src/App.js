@@ -43,5 +43,3 @@ const ComingSoon = ({ feature }) => (
 );
 
 export default App;
-
-export default App;
