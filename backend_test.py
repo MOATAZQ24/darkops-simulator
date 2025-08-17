@@ -238,11 +238,12 @@ class DarkOpsLabTester:
             self.log_test("Update existing progress", False, f"Exception: {str(e)}")
         
         # Test 3: Complete attack (step 4 of 4 for ddos_attack)
+        # Note: We need to test with a fresh attack since we already have progress for ddos_attack
         try:
             complete_data = {
                 "session_id": self.session_id,
-                "attack_id": "ddos_attack",
-                "current_step": 4,
+                "attack_id": "ransomware_attack",  # Use different attack to test completion
+                "current_step": 4,  # ransomware_attack also has 4 steps
                 "time_spent": 450
             }
             
@@ -253,7 +254,8 @@ class DarkOpsLabTester:
                     self.log_test("Complete attack progress", True,
                                 f"Attack completed: {progress_result.get('is_completed')}, Completed at: {progress_result.get('completed_at')}")
                 else:
-                    self.log_test("Complete attack progress", False, "Attack not marked as completed")
+                    self.log_test("Complete attack progress", False, 
+                                f"Attack not marked as completed. Step: {progress_result.get('current_step')}, Total: {progress_result.get('total_steps')}")
             else:
                 self.log_test("Complete attack progress", False,
                             f"Status: {response.status_code}, Response: {response.text}")
