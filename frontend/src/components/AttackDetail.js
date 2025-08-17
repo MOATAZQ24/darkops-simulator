@@ -11,7 +11,8 @@ import {
   Clock,
   Target,
   CheckCircle,
-  AlertTriangle
+  AlertTriangle,
+  Trophy
 } from 'lucide-react';
 import { useSession } from '../contexts/SessionContext';
 import axios from 'axios';
