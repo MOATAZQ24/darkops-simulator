@@ -901,19 +901,7 @@ export const AttackDetail = () => {
           )}
 
           {activeTab === 'quiz' && (
-            <div className="bg-gray-900/50 border border-gray-700 rounded-xl p-6">
-              <h3 className="text-xl font-semibold text-white mb-4">Knowledge Quiz</h3>
-              <p className="text-gray-400 mb-6">Test your understanding of this attack</p>
-              
-              {/* Quiz component will be implemented in next phase */}
-              <div className="text-center py-12">
-                <Target className="w-16 h-16 text-cyan-400 mx-auto mb-4" />
-                <p className="text-gray-400">Interactive quiz coming soon!</p>
-                <p className="text-gray-500 text-sm mt-2">
-                  Quiz functionality will be added in the next development phase
-                </p>
-              </div>
-            </div>
+            <QuizComponent attack={attack} sessionId={sessionId} />
           )}
         </motion.div>
       </AnimatePresence>
