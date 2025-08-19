@@ -36,16 +36,19 @@ It allows users to **launch simulated cyberattacks**, analyze their impact, and 
 
 ---
 
+
+
 ## ⚙️ Tech Stack
 
 - **Frontend:** React, TailwindCSS, shadcn UI  
 - **Backend:** Python (Flask/Django)  
-- **Simulation Tools:** Docker, Metasploit, Nmap, Wireshark (integrations)  
+- **Simulation Tools:** Docker, Metasploit, Nmap, Wireshark  
 - **Database:** PostgreSQL / MongoDB  
+- **Version Control:** Git + GitHub  
 
 ---
 
-## 🛠️ Installation
+## 🛠️ Installation & Setup
 
 ```bash
 # Clone the repository
@@ -57,13 +60,12 @@ cd DarkOps
 # Setup backend
 cd backend
 pip install -r requirements.txt
-python app.py
+python app.py  # or python manage.py runserver for Django
 
 # Setup frontend
 cd frontend
 npm install
 npm run dev
-
 
 ---
 
